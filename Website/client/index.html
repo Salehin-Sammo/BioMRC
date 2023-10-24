@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BERT Q&A</title>
+    <style>
+        #context {
+            width: 80%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        #question {
+            width: 80%;
+            margin-bottom: 10px;
+        }
+
+        #answer {
+            color: blue;
+            font-weight: bold;
+        }
+
+        #error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Ask a Question</h2>
+    <textarea id="context" placeholder="Enter context"></textarea><br>
+    <input type="text" id="question" placeholder="Enter your question">
+    <button onclick="getAnswer()">Ask</button>
+    <p>Answer: <span id="answer"></span></p>
+    <p id="error"></p>
+
+    <script>
+        async function getAnswer() {
+    let context = document.getElementById('context').value;
+    let question = document.getElementById('question').value;
+
+    let response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ context: context, question: question })
+    });
+
+    let data = await response.json();
+    if(data.answer) {
+        document.getElementById('answer').textContent = data.answer;
+    } else {
+        document.getElementById('answer').textContent = "Error: " + data.error;
+    }
+}
+
+    </script>
+</body>
+</html>
